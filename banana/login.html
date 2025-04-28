@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Login</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #FFFFFF;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        nav {
+            position: absolute;
+            top: 20px;
+            width: 100%;
+            text-align: center;
+            background-color: #1F1F1F;
+            padding: 10px;
+        }
+        nav a {
+            color: white;
+            text-decoration: none;
+            padding: 10px 20px;
+            margin: 0 10px;
+            display: inline-block;
+            font-weight: 500;
+            transition: background-color 0.3s;
+        }
+        nav a:hover {
+            background-color: #555;
+        }
+        .login-container {
+            background-color: white;
+            padding: 30px 40px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+        h2 {
+            margin-bottom: 20px;
+            font-size: 24px;
+            font-weight: 600;
+            color: #333;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            text-align: left;
+            font-size: 14px;
+            color: #555;
+        }
+        input {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+        input:focus {
+            border-color: #007BFF;
+        }
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #d68e3c;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #a06727;
+        }
+        .forgot-password {
+            margin-top: 10px;
+            font-size: 14px;
+            color: #007BFF;
+            text-decoration: none;
+        }
+        .forgot-password:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+<nav>
+    <a href="register.html">Register</a>
+    <a href="login.html">Login</a>
+</nav>
+
+
+<form id="loginForm" action="login.php" method="POST">
+    <label>Username:</label><br>
+    <input type="text" name="username" required><br>
+    <label>Password:</label><br>
+    <input type="password" name="password" required><br><br>
+    <button type="submit" id="loginBtn">Login</button>
+</form>
+
+<script>
+    document.getElementById("loginForm").addEventListener("submit", function(e) {
+        e.preventDefault();
+    
+        const form = this;
+        const formData = new FormData(form);
+        const loginBtn = document.getElementById("loginBtn");
+    
+        fetch("login.php", {
+            method: "POST",
+            body: formData
+        })
+        .then(response => response.text())
+        .then(result => {
+            if (result === "success") {
+                alert("Login successful!");
+                window.location.href = "dashboard.php";
+            } else if (result === "invalid") {
+                alert("Invalid username or password.");
+            } else if (result === "locked") {
+                alert("Too many failed attempts. Please try again in 5 minutes.");
+                disableLoginButton(loginBtn);
+            }
+        });
+    });
+    
+    function disableLoginButton(button) {
+        button.disabled = true;
+        button.textContent = "Locked (5 min)";
+        button.style.backgroundColor = "#999";
+        button.style.cursor = "not-allowed";
+    
+        setTimeout(() => {
+            button.disabled = false;
+            button.textContent = "Login";
+            button.style.backgroundColor = "";
+            button.style.cursor = "";
+        }, 5 * 60 * 1000); // 5 minutes
+    }
+    </script>
+    
+    
+</body>
+</html>
